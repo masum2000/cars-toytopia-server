@@ -11,10 +11,8 @@ app.use(express.json());
 
 
 
-
-// const uri = "mongodb+srv://<username>:<password>@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority";
-const uri = "mongodb+srv://carsToytopia:zNDDw8sszNxNOkfT@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority";
-
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri);
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -28,12 +26,25 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+
+    const toyCollection = client.db('toyDB').collection('toy');
+
+    app.post('/toy', async(req, res)=> {
+        const newToy = req.body;
+        console.log(newToy);
+        const result = await toyCollection.insertOne(newToy);
+        res.send(result);
+    })
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
@@ -50,5 +61,3 @@ app.listen(port,()=>{
 });
 
 
-// zNDDw8sszNxNOkfT
-// carsToytopia
