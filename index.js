@@ -12,7 +12,7 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -31,18 +31,45 @@ async function run() {
     const toyCollection = client.db('toyDB').collection('toy');
 
 
+     // send all data to database
+     app.post('/toy', async(req, res)=> {
+      const newToy = req.body;
+      console.log(newToy);
+      const result = await toyCollection.insertOne(newToy);
+      res.send(result);
+  });
+
+
+// receive all data from database
     app.get('/toy', async(req,res) =>{
-        const cursor = toyCollection.find();
-        const result = await cursor.toArray();
+        const query = {}
+        const result = await toyCollection.find(query).toArray();
         res.send(result);
     })
 
-    app.post('/toy', async(req, res)=> {
-        const newToy = req.body;
-        console.log(newToy);
-        const result = await toyCollection.insertOne(newToy);
-        res.send(result);
+    // find specific data from mongoDB
+    app.get('/myToy', async(req, res)=> {
+      const sellerEmail = req.query.sellerEmail;
+      const query = {sellerEmail:sellerEmail};
+      const result = await toyCollection.find(query).toArray();
+      res.send(result);
     })
+
+
+    // app.get('/myToy', async(req, res) =>{
+    //   console.log(req.query.sellerEmail);
+    //   let query = {};
+    //    if(req.query?.sellerEmail){
+    //     query = {sellerEmail: req.query.sellerEmail}
+    //    }
+    //   const result = await toyCollection.find(query).toArray();
+    //   res.send(result);
+    // })
+
+
+   
+
+
 
 
 
