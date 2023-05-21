@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://carsToytopia:zNDDw8sszNxNOkfT@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
 
     const toyCollection = client.db('toyDB').collection('toy');
@@ -40,9 +40,37 @@ async function run() {
   });
 
 
+  // update a toy
+  app.put('/singleToy/:id', async(req, res) =>{
+          const id = req.params.id;
+          const filter = { _id: new ObjectId (id) };
+          const options = {upsert: true};
+          const updatedToy = req.body;
+          console.log(updatedToy);
+          const toy = {
+            $set:{
+              name: updatedToy.name,
+              sellerName: updatedToy.sellerName,
+              sellerEmail: updatedToy.sellerEmail,
+              subCategory: updatedToy.subCategory,
+              subCategoryId: updatedToy.subCategoryId,
+              photo: updatedToy.photo,
+              rating: updatedToy.rating,
+              price: updatedToy.price,
+              quantity: updatedToy.quantity,
+              description:updatedToy.description
+            }
+          }
+
+          const result  = await toyCollection.updateOne(filter,toy,options);
+          res.send(result);
+  })
+
+
   // data delete
-  app.delete('/toy/:id', async(req, res) => {
+  app.post('/dSingleToy/:id', async(req, res) => {
     const id  = req.params.id;
+    console.log(id);
     const query = {_id: new ObjectId(id)}
     const result = await toyCollection.deleteOne(query);
     res.send(result); 
@@ -64,16 +92,16 @@ async function run() {
       res.send(result);
     })
 
+    // update a specific toy data
+     app.get('/singleToy/:id', async(req, res)=> {
+      const id = req.params.id;
+      const query = { _id: new ObjectId (id)}
+      const result = await toyCollection.findOne(query);
+      res.send(result);
+     })
 
-    // app.get('/myToy', async(req, res) =>{
-    //   console.log(req.query.sellerEmail);
-    //   let query = {};
-    //    if(req.query?.sellerEmail){
-    //     query = {sellerEmail: req.query.sellerEmail}
-    //    }
-    //   const result = await toyCollection.find(query).toArray();
-    //   res.send(result);
-    // })
+
+    
 
 
    
