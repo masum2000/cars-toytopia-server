@@ -100,7 +100,15 @@ async function run() {
       res.send(result);
      })
 
-
+     app.get('/allCategory/:text', async (req, res) => {
+      console.log(req.params.text);
+      if (req.params.text =="regular" || req.params.text=="police"){
+        const result = await toyCollection.find({subCategory: req.params.text}).toArray();
+        return result;
+      }
+      // const result = await toyCollection.find({}).toArray();
+      // res.send(result);
+     });
     
 
 
