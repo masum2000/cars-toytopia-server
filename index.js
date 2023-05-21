@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 
-const uri = `mongodb+srv://carsToytopia:zNDDw8sszNxNOkfT@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_PASS}@cluster2.p1tk2ky.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
