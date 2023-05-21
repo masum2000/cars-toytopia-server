@@ -102,7 +102,7 @@ async function run() {
 
      app.get('/allCategory/:text', async (req, res) => {
       console.log(req.params.text);
-      if (req.params.text == "Regular Car" || req.params.text == "Police Car" || req.params.text == "Truck Car"){
+      if (req.params.text == "RegularCar" || req.params.text == "PoliceCar" || req.params.text == "TruckCar"){
         const result = await toyCollection.find({subCategory: req.params.text}).toArray();
         return res.send(result);
       }
